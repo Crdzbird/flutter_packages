@@ -5744,6 +5744,137 @@ void main() {
 
     await gesture.up();
   });
+  group('Material 3 Expressive', () {
+    Widget buildSlider({
+      StyleVariant? variant = StyleVariant.material3Expressive,
+      SliderSizeVariant? sizeVariant,
+      double? trackHeight,
+      bool? year2023,
+      bool useMaterial3 = true,
+    }) {
+      return MaterialApp(
+        theme: ThemeData(useMaterial3: useMaterial3),
+        home: Material(
+          child: Center(
+            child: SliderTheme(
+              data: SliderThemeData(
+                variant: variant,
+                sizeVariant: sizeVariant,
+                trackHeight: trackHeight,
+              ),
+              child: Slider(year2023: year2023, value: 0.5, onChanged: (double value) {}),
+            ),
+          ),
+        ),
+      );
+    }
+
+    PaintPattern paintsTrack({required double height, required double cornerRadius}) {
+      return paints..something((Symbol method, List<dynamic> arguments) {
+        if (method != #drawRRect) {
+          return false;
+        }
+        final rrect = arguments[0] as RRect;
+        return rrect.height == height && rrect.tlRadiusX == cornerRadius;
+      });
+    }
+
+    const sizes = <SliderSizeVariant, (double, double, double)>{
+      SliderSizeVariant.xSmall: (16.0, 8.0, 48.0),
+      SliderSizeVariant.small: (24.0, 8.0, 48.0),
+      SliderSizeVariant.medium: (40.0, 12.0, 48.0),
+      SliderSizeVariant.large: (56.0, 16.0, 68.0),
+      SliderSizeVariant.xLarge: (96.0, 28.0, 108.0),
+    };
+
+    for (final MapEntry<SliderSizeVariant, (double, double, double)> entry in sizes.entries) {
+      testWidgets('Slider uses Material 3 Expressive ${entry.key.name} defaults', (
+        WidgetTester tester,
+      ) async {
+        final (double trackHeight, double cornerRadius, double sliderHeight) = entry.value;
+        await tester.pumpWidget(buildSlider(sizeVariant: entry.key));
+
+        expect(
+          tester
+              .renderObject<RenderBox>(find.byType(Slider))
+              .getMaxIntrinsicHeight(double.infinity),
+          sliderHeight,
+        );
+        final MaterialInkController material = Material.of(tester.element(find.byType(Slider)));
+        expect(material, paintsTrack(height: trackHeight, cornerRadius: cornerRadius));
+      });
+    }
+
+    testWidgets('Material 3 Expressive Slider defaults to xSmall', (WidgetTester tester) async {
+      await tester.pumpWidget(buildSlider());
+
+      expect(
+        tester.renderObject<RenderBox>(find.byType(Slider)).getMaxIntrinsicHeight(double.infinity),
+        48.0,
+      );
+      final MaterialInkController material = Material.of(tester.element(find.byType(Slider)));
+      expect(material, paintsTrack(height: 16.0, cornerRadius: 8.0));
+    });
+
+    testWidgets('SliderThemeData.trackHeight overrides the size variant default', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        buildSlider(sizeVariant: SliderSizeVariant.xLarge, trackHeight: 30.0),
+      );
+
+      final MaterialInkController material = Material.of(tester.element(find.byType(Slider)));
+      expect(material, paintsTrack(height: 30.0, cornerRadius: 28.0));
+    });
+
+    testWidgets('Material 3 Expressive Slider ignores year2023', (WidgetTester tester) async {
+      await tester.pumpWidget(buildSlider(sizeVariant: SliderSizeVariant.medium, year2023: true));
+
+      final MaterialInkController material = Material.of(tester.element(find.byType(Slider)));
+      expect(material, paintsTrack(height: 40.0, cornerRadius: 12.0));
+    });
+
+    testWidgets('Slider ignores sizeVariant without the Material 3 Expressive variant', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(buildSlider(variant: null, sizeVariant: SliderSizeVariant.xLarge));
+
+      expect(
+        tester.renderObject<RenderBox>(find.byType(Slider)).getMaxIntrinsicHeight(double.infinity),
+        48.0,
+      );
+      final MaterialInkController material = Material.of(tester.element(find.byType(Slider)));
+      expect(material, isNot(paintsTrack(height: 96.0, cornerRadius: 28.0)));
+    });
+
+    testWidgets('Slider ignores the Material 3 Expressive variant when useMaterial3 is false', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        buildSlider(sizeVariant: SliderSizeVariant.xLarge, useMaterial3: false),
+      );
+
+      expect(
+        tester.renderObject<RenderBox>(find.byType(Slider)).getMaxIntrinsicHeight(double.infinity),
+        48.0,
+      );
+      final MaterialInkController material = Material.of(tester.element(find.byType(Slider)));
+      expect(material, isNot(paintsTrack(height: 96.0, cornerRadius: 28.0)));
+    });
+
+    test('HandleThumbShape uses preferredSize for layout', () {
+      expect(const HandleThumbShape().getPreferredSize(true, false), const Size(4.0, 44.0));
+      expect(
+        const HandleThumbShape(preferredSize: Size(4.0, 108.0)).getPreferredSize(true, false),
+        const Size(4.0, 108.0),
+      );
+    });
+
+    test('GappedSliderTrackShape trackCornerRadius defaults to null', () {
+      expect(const GappedSliderTrackShape().trackCornerRadius, isNull);
+      expect(const GappedSliderTrackShape(trackCornerRadius: 12.0).trackCornerRadius, 12.0);
+    });
+  });
 }
 
 // A slider value indicator that's a circle with a fixed size and

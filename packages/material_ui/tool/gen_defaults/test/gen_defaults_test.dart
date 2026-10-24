@@ -934,6 +934,46 @@ void main() {
       expect(contents, contains('WidgetState.hovered: unselected?.withOpacity(0.08)'));
     });
 
+    test('SliderTemplateM3E emits M3E Slider defaults from tokens', () {
+      const template = SliderTemplateM3E();
+      expect(template.parentFilePath, 'slider.dart');
+      expect(template.outputFileName, 'slider_defaults_m3e.g.dart');
+
+      final String contents = _generateContents(template);
+      expect(contents, contains('class _SliderDefaultsM3E extends SliderThemeData'));
+      expect(
+        contents,
+        contains('_SliderDefaultsM3E(this.context, SliderSizeVariant? sizeVariant)'),
+      );
+      expect(
+        contents,
+        contains('SliderSizeVariant get sizeVariant => _sizeVariant ?? SliderSizeVariant.xSmall;'),
+      );
+      expect(contents, contains('SliderSizeVariant.xSmall => 16.0'));
+      expect(contents, contains('SliderSizeVariant.medium => 40.0'));
+      expect(contents, contains('SliderSizeVariant.xLarge => 96.0'));
+      expect(
+        contents,
+        contains(
+          'SliderSizeVariant.medium => const GappedSliderTrackShape(trackCornerRadius: 12.0)',
+        ),
+      );
+      expect(
+        contents,
+        contains(
+          'SliderSizeVariant.xLarge => const HandleThumbShape(preferredSize: Size(4.0, 108.0))',
+        ),
+      );
+      expect(contents, contains('SliderSizeVariant.large => 68.0'));
+      expect(contents, contains('return Size(2.0, handleHeight);'));
+      expect(
+        contents,
+        contains('Color? get secondaryActiveTrackColor => _colors.primary.withValues(alpha: 0.54)'),
+      );
+      expect(contents, contains('Color? get activeTickMarkColor => _colors.onPrimary;'));
+      expect(contents, contains('double? get trackGap => 6.0'));
+    });
+
     test('SliderTemplateM3 emits M3 Slider defaults from tokens', () {
       const template = SliderTemplateM3();
       expect(template.parentFilePath, 'slider.dart');

@@ -19,6 +19,7 @@ import 'slider.dart';
 import 'slider_parts.dart';
 import 'slider_value_indicator_shape.dart';
 import 'theme.dart';
+import 'theme_data.dart';
 
 /// Applies a slider theme to descendant [Slider] widgets.
 ///
@@ -149,6 +150,34 @@ enum ShowValueIndicator {
 
   /// The value indicator will never be shown.
   never,
+}
+
+/// Defines the size variants for a Material 3 Expressive [Slider].
+///
+/// Each size variant selects the track height, the track corner radius, and
+/// the handle height that the Material 3 Expressive specification defines for
+/// that size.
+///
+/// See also:
+///
+///  * [SliderThemeData.sizeVariant], which selects the size of a [Slider].
+///  * [SliderThemeData.variant], which opts a [Slider] into Material 3
+///    Expressive.
+enum SliderSizeVariant {
+  /// The smallest slider size, with a 16 logical pixel track.
+  xSmall,
+
+  /// A small slider size, with a 24 logical pixel track.
+  small,
+
+  /// A medium slider size, with a 40 logical pixel track.
+  medium,
+
+  /// A large slider size, with a 56 logical pixel track.
+  large,
+
+  /// The largest slider size, with a 96 logical pixel track.
+  xLarge,
 }
 
 /// Identifier for a thumb.
@@ -326,6 +355,8 @@ class SliderThemeData with Diagnosticable {
       'This feature was deprecated after v3.27.0-0.2.pre.',
     )
     this.year2023,
+    this.variant,
+    this.sizeVariant,
   });
 
   /// Generates a SliderThemeData from three main colors.
@@ -667,6 +698,30 @@ class SliderThemeData with Diagnosticable {
   )
   final bool? year2023;
 
+  /// The style variant of Material Design used by [Slider].
+  ///
+  /// Set this to [StyleVariant.material3Expressive] to opt sliders into the
+  /// Material 3 Expressive style. When set, [year2023] is ignored.
+  ///
+  /// This property only affects [Slider]. [RangeSlider] does not support
+  /// Material 3 Expressive yet.
+  ///
+  /// If null, [Slider] uses [StyleVariant.material3].
+  final StyleVariant? variant;
+
+  /// The Material 3 Expressive size variant for [Slider].
+  ///
+  /// The size variant selects the default track height, track corner radius,
+  /// and handle height of the slider.
+  ///
+  /// This property only has an effect when [variant] is
+  /// [StyleVariant.material3Expressive]. Explicitly set properties, such as
+  /// [trackHeight] or [thumbSize], take precedence over the size variant
+  /// defaults.
+  ///
+  /// If null, Material 3 Expressive sliders use [SliderSizeVariant.xSmall].
+  final SliderSizeVariant? sizeVariant;
+
   /// Creates a copy of this object but with the given fields replaced with the
   /// new values.
   SliderThemeData copyWith({
@@ -706,6 +761,8 @@ class SliderThemeData with Diagnosticable {
     WidgetStateProperty<Size?>? thumbSize,
     double? trackGap,
     bool? year2023,
+    StyleVariant? variant,
+    SliderSizeVariant? sizeVariant,
   }) {
     return SliderThemeData(
       trackHeight: trackHeight ?? this.trackHeight,
@@ -746,6 +803,8 @@ class SliderThemeData with Diagnosticable {
       thumbSize: thumbSize ?? this.thumbSize,
       trackGap: trackGap ?? this.trackGap,
       year2023: year2023 ?? this.year2023,
+      variant: variant ?? this.variant,
+      sizeVariant: sizeVariant ?? this.sizeVariant,
     );
   }
 
@@ -829,6 +888,8 @@ class SliderThemeData with Diagnosticable {
       thumbSize: WidgetStateProperty.lerp<Size?>(a.thumbSize, b.thumbSize, t, Size.lerp),
       trackGap: lerpDouble(a.trackGap, b.trackGap, t),
       year2023: t < 0.5 ? a.year2023 : b.year2023,
+      variant: t < 0.5 ? a.variant : b.variant,
+      sizeVariant: t < 0.5 ? a.sizeVariant : b.sizeVariant,
     );
   }
 
@@ -870,6 +931,8 @@ class SliderThemeData with Diagnosticable {
       thumbSize,
       trackGap,
       year2023,
+      variant,
+      sizeVariant,
     ),
   );
 
@@ -917,7 +980,9 @@ class SliderThemeData with Diagnosticable {
         other.padding == padding &&
         other.thumbSize == thumbSize &&
         other.trackGap == trackGap &&
-        other.year2023 == year2023;
+        other.year2023 == year2023 &&
+        other.variant == variant &&
+        other.sizeVariant == sizeVariant;
   }
 
   @override
@@ -1152,6 +1217,8 @@ class SliderThemeData with Diagnosticable {
     properties.add(
       DiagnosticsProperty<bool>('year2023', year2023, defaultValue: defaultData.year2023),
     );
+    properties.add(EnumProperty<StyleVariant>('variant', variant, defaultValue: null));
+    properties.add(EnumProperty<SliderSizeVariant>('sizeVariant', sizeVariant, defaultValue: null));
   }
 }
 

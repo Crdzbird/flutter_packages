@@ -67,6 +67,8 @@ void main() {
       thumbSize: WidgetStatePropertyAll<Size>(Size(20, 20)),
       trackGap: 10.0,
       year2023: false,
+      variant: StyleVariant.material3Expressive,
+      sizeVariant: SliderSizeVariant.medium,
     ).debugFillProperties(builder);
 
     final List<String> description = builder.properties
@@ -109,7 +111,35 @@ void main() {
       'thumbSize: WidgetStatePropertyAll(Size(20.0, 20.0))',
       'trackGap: 10.0',
       'year2023: false',
+      'variant: material3Expressive',
+      'sizeVariant: medium',
     ]);
+  });
+
+  test('SliderThemeData supports variant and sizeVariant', () {
+    const theme = SliderThemeData(
+      variant: StyleVariant.material3Expressive,
+      sizeVariant: SliderSizeVariant.large,
+    );
+
+    expect(theme.copyWith().variant, StyleVariant.material3Expressive);
+    expect(theme.copyWith().sizeVariant, SliderSizeVariant.large);
+    expect(
+      theme.copyWith(sizeVariant: SliderSizeVariant.small).sizeVariant,
+      SliderSizeVariant.small,
+    );
+    expect(theme.copyWith(variant: StyleVariant.material3).variant, StyleVariant.material3);
+
+    const other = SliderThemeData(sizeVariant: SliderSizeVariant.xSmall);
+    expect(SliderThemeData.lerp(theme, other, 0.25).variant, StyleVariant.material3Expressive);
+    expect(SliderThemeData.lerp(theme, other, 0.25).sizeVariant, SliderSizeVariant.large);
+    expect(SliderThemeData.lerp(theme, other, 0.75).variant, isNull);
+    expect(SliderThemeData.lerp(theme, other, 0.75).sizeVariant, SliderSizeVariant.xSmall);
+
+    expect(theme, theme.copyWith());
+    expect(theme.hashCode, theme.copyWith().hashCode);
+    expect(theme, isNot(theme.copyWith(sizeVariant: SliderSizeVariant.xLarge)));
+    expect(theme, isNot(theme.copyWith(variant: StyleVariant.material3)));
   });
 
   testWidgets('Slider defaults', (WidgetTester tester) async {

@@ -114,6 +114,7 @@ Future<void> main(List<String> args) async {
   const SearchViewTemplateM3().generateFile(verbose: verbose);
   const SegmentedButtonTemplateM3().generateFile(verbose: verbose);
   const SliderTemplateM3().generateFile(verbose: verbose);
+  const SliderTemplateM3E().generateFile(verbose: verbose);
   const SnackbarTemplateM3().generateFile(verbose: verbose);
   const SwitchTemplateM3().generateFile(verbose: verbose);
   const TabsTemplateM3().generateFile(verbose: verbose);

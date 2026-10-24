@@ -988,11 +988,20 @@ class _DropSliderValueIndicatorPathPainter {
 ///    sliders in a widget subtree.
 class HandleThumbShape extends SliderComponentShape {
   /// Create a slider thumb that draws a bar.
-  const HandleThumbShape();
+  const HandleThumbShape({this.preferredSize});
+
+  /// The size the slider uses to lay out this thumb.
+  ///
+  /// The painted size of the thumb comes from [SliderThemeData.thumbSize].
+  /// Set this to the largest height that [SliderThemeData.thumbSize] resolves
+  /// to, so that the slider is tall enough to fit the thumb.
+  ///
+  /// If null, the preferred size is 4 pixels wide and 44 pixels tall.
+  final Size? preferredSize;
 
   @override
   Size getPreferredSize(bool isEnabled, bool isDiscrete) {
-    return const Size(4.0, 44.0);
+    return preferredSize ?? const Size(4.0, 44.0);
   }
 
   @override
@@ -1039,7 +1048,8 @@ class HandleThumbShape extends SliderComponentShape {
 /// inactive track uses the [SliderThemeData.inactiveTrackColor].
 ///
 /// The track shape uses circular corner radius for the edge corners and a corner radius
-/// of 2 pixels for the inside corners.
+/// of 2 pixels for the inside corners. Use [trackCornerRadius] to set a fixed corner
+/// radius for the edge corners instead.
 ///
 /// Between the active and inactive tracks there is a gap of size [SliderThemeData.trackGap].
 /// If the [SliderThemeData.thumbShape] is [HandleThumbShape] and the thumb is pressed, the thumb's
@@ -1058,7 +1068,13 @@ class HandleThumbShape extends SliderComponentShape {
 ///    sliders in a widget subtree.
 class GappedSliderTrackShape extends SliderTrackShape with BaseSliderTrackShape {
   /// Create a slider track that draws two rectangles with rounded outer edges.
-  const GappedSliderTrackShape();
+  const GappedSliderTrackShape({this.trackCornerRadius});
+
+  /// The corner radius of the outer edges of the track.
+  ///
+  /// If null, the radius is half of the track height, which makes the outer
+  /// edges fully rounded.
+  final double? trackCornerRadius;
 
   @override
   void paint(
@@ -1122,7 +1138,7 @@ class GappedSliderTrackShape extends SliderTrackShape with BaseSliderTrackShape 
       isDiscrete: isDiscrete,
     );
 
-    final trackCornerRadius = Radius.circular(trackRect.shortestSide / 2);
+    final trackCornerRadius = Radius.circular(this.trackCornerRadius ?? trackRect.shortestSide / 2);
     const trackInsideCornerRadius = Radius.circular(2.0);
 
     final trackRRect = RRect.fromRectAndCorners(

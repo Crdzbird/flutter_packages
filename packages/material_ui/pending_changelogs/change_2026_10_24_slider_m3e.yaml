@@ -1,0 +1,4 @@
+changelog: |
+  - Adds Material 3 Expressive support for `Slider`, with `SliderThemeData.variant`, `SliderThemeData.sizeVariant`, and `SliderSizeVariant`.
+  - Adds `GappedSliderTrackShape.trackCornerRadius` and `HandleThumbShape.preferredSize`.
+version: minor

@@ -28,8 +28,10 @@ import 'slider_parts.dart';
 import 'slider_theme.dart';
 import 'slider_value_indicator_shape.dart';
 import 'theme.dart';
+import 'theme_data.dart';
 
 part 'generated/slider_defaults_m3.g.dart';
+part 'generated/slider_defaults_m3e.g.dart';
 
 // Examples can assume:
 // int _dollars = 0;
@@ -152,6 +154,38 @@ enum SliderInteraction {
 /// widget tree. You can also override some of the colors with the [activeColor]
 /// and [inactiveColor] properties, although more fine-grained control of the
 /// look is achieved using a [SliderThemeData].
+///
+/// ## Material 3 Expressive
+///
+/// To opt a slider into the Material 3 Expressive style, set
+/// [SliderThemeData.variant] to [StyleVariant.material3Expressive], and use
+/// [SliderThemeData.sizeVariant] to pick one of the [SliderSizeVariant] sizes.
+/// The sizes change the default track height, track corner radius, and handle
+/// height:
+///
+/// * [SliderSizeVariant.xSmall] - 16 track height, 8 corner radius, 44 handle
+///   height
+/// * [SliderSizeVariant.small] - 24 track height, 8 corner radius, 44 handle
+///   height
+/// * [SliderSizeVariant.medium] - 40 track height, 12 corner radius, 44 handle
+///   height
+/// * [SliderSizeVariant.large] - 56 track height, 16 corner radius, 68 handle
+///   height
+/// * [SliderSizeVariant.xLarge] - 96 track height, 28 corner radius, 108
+///   handle height
+///
+/// ```dart
+/// SliderTheme(
+///   data: const SliderThemeData(
+///     variant: StyleVariant.material3Expressive,
+///     sizeVariant: SliderSizeVariant.medium,
+///   ),
+///   child: Slider(value: 0.5, onChanged: (double value) {}),
+/// )
+/// ```
+///
+/// When [SliderThemeData.variant] is [StyleVariant.material3Expressive],
+/// [year2023] is ignored.
 ///
 /// See also:
 ///
@@ -871,8 +905,13 @@ class _SliderState extends State<Slider> with TickerProviderStateMixin {
     final ThemeData theme = Theme.of(context);
     SliderThemeData sliderTheme = SliderTheme.of(context);
     final bool year2023 = widget.year2023 ?? sliderTheme.year2023 ?? true;
+    final StyleVariant variant = sliderTheme.variant ?? StyleVariant.material3;
     final SliderThemeData defaults = switch (theme.useMaterial3) {
-      true => year2023 ? _SliderDefaultsM3Year2023(context) : _SliderDefaultsM3(context),
+      true => switch (variant) {
+        StyleVariant.material3 =>
+          year2023 ? _SliderDefaultsM3Year2023(context) : _SliderDefaultsM3(context),
+        StyleVariant.material3Expressive => _SliderDefaultsM3E(context, sliderTheme.sizeVariant),
+      },
       false => _SliderDefaultsM2(context),
     };
 
